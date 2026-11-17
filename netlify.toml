@@ -1,0 +1,7 @@
+[build]
+  publish = "public"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+  included_files = ["node_modules/@netlify/database/**/*.cjs", "node_modules/waddler/**/*.cjs"]

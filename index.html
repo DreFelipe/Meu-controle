@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meu Controle - Controle Financeiro Pessoal</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%234f46e5'/%3E%3Cpath d='M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<meta name="description" content="Acompanhe saldo, receitas, despesas pagas e pendentes do mês com gráficos claros.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<section id="view-login" class="login-view">
+  <div class="login-card">
+    <div class="login-logo" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>
+    </div>
+    <h1>Meu Controle</h1>
+    <p class="sub">Controle financeiro pessoal</p>
+    <form id="login-form" autocomplete="off" novalidate>
+      <label for="login-email">Seu email</label>
+      <input id="login-email" type="email" placeholder="voce@email.com" autocomplete="email">
+      <label for="login-senha">Senha</label>
+      <input id="login-senha" type="password" placeholder="Sua senha" autocomplete="current-password">
+      <div id="login-confirm-wrap" class="hidden">
+        <label for="login-confirma">Confirme a senha</label>
+        <input id="login-confirma" type="password" placeholder="Repita a senha" autocomplete="new-password">
+      </div>
+      <button type="submit" id="login-submit" class="btn primary block">Entrar</button>
+      <p id="login-msg" class="login-msg"></p>
+      <button type="button" id="login-toggle" class="link-btn">Criar novo acesso</button>
+      <p class="login-hint">Seus dados ficam salvos no banco de dados do servidor (SQLite).</p>
+    </form>
+  </div>
+</section>
+
+<!-- ============ APP ============ -->
+<div id="app-shell" class="hidden">
+  <header class="site">
+    <div class="header-inner">
+      <a href="#" class="brand" data-view="dashboard">
+        <span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></span>
+        <span class="name">Meu Controle</span>
+      </a>
+      <nav class="site" aria-label="Navegação principal">
+        <a href="#" class="nav-link" data-view="dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+          <span class="txt">Painel</span><span class="short">Início</span>
+        </a>
+        <a href="#" class="nav-link" data-view="transacoes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
+          <span class="txt">Lançamentos</span><span class="short">Lançar</span>
+        </a>
+        <a href="#" class="nav-link" data-view="categorias">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.172 2a2 2 0 0 1 1.414.586l6.71 6.71a2.4 2.4 0 0 1 0 3.408l-4.592 4.592a2.4 2.4 0 0 1-3.408 0l-6.71-6.71A2 2 0 0 1 6 9.172V3a1 1 0 0 1 1-1z"/><circle cx="10.5" cy="6.5" r=".5" fill="currentColor"/></svg>
+          <span class="txt">Categorias</span><span class="short">Cat</span>
+        </a>
+        <a href="#" class="nav-link" data-view="carteira">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>
+          <span class="txt">Carteira</span><span class="short">Carteira</span>
+        </a>
+        <a href="#" class="nav-link" data-view="relatorios">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z"/><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/></svg>
+          <span class="txt">Relatórios</span><span class="short">Rel</span>
+        </a>
+      </nav>
+      <span class="header-user" id="header-user"></span>
+      <button class="lock-btn" id="btn-lock" title="Sair da conta" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 12H3"/><path d="M9 6l-6 6 6 6"/><path d="M21 8V6a2 2 0 0 0-2-2h-3"/><path d="M21 8v12a2 2 0 0 1-2 2h-3"/></svg>
+        Sair
+      </button>
+    </div>
+  </header>
+
+  <main class="app">
+
+    <!-- ===== Dashboard ===== -->
+    <section class="view" id="view-dashboard">
+      <div class="page-head">
+        <div>
+          <h1>Painel</h1>
+          <p class="sub" id="dash-sub"></p>
+        </div>
+        <button class="btn primary" id="dash-novo" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+          Novo lançamento
+        </button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="card stat">
+          <span class="ic primary" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></span>
+          <div><div class="lbl">Saldo disponível</div><div class="val" id="dash-saldo">R$ 0,00</div></div>
+        </div>
+        <div class="card stat">
+          <span class="ic income" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></span>
+          <div><div class="lbl">Receitas do mês</div><div class="val" id="dash-receitas">R$ 0,00</div></div>
+        </div>
+        <div class="card stat">
+          <span class="ic expense" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 7 10 10"/><path d="M17 7v10H7"/></svg></span>
+          <div><div class="lbl">Despesas pagas do mês</div><div class="val" id="dash-despesas">R$ 0,00</div></div>
+        </div>
+        <div class="card stat">
+          <span class="ic pending" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <div><div class="lbl">A pagar (pendente)</div><div class="val" id="dash-pendente">R$ 0,00</div></div>
+        </div>
+        <div class="card stat">
+          <span class="ic projected" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></span>
+          <div><div class="lbl">Saldo projetado</div><div class="val" id="dash-projetado">R$ 0,00</div></div>
+        </div>
+      </div>
+
+      <div class="grid-5">
+        <div class="card">
+          <div class="card-head"><h3>Despesas por categoria</h3><p class="card-sub">Pago x pendente</p></div>
+          <div class="card-body">
+            <div id="dash-pie"></div>
+            <div id="dash-pie-legend"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Últimos 6 meses</h3></div>
+          <div class="card-body">
+            <div id="dash-bars"></div>
+            <div class="legend">
+              <span class="item"><span class="dot income"></span>Receitas</span>
+              <span class="item"><span class="dot expense"></span>Despesas pagas</span>
+              <span class="item"><span class="dot pending"></span>Despesas pendentes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:24px">
+        <div class="card-head"><h3>Próximos vencimentos</h3></div>
+        <div class="card-body flush" id="dash-upcoming"></div>
+      </div>
+
+      <div class="card" style="margin-top:24px">
+        <div class="card-head"><h3>Lançamentos recentes</h3></div>
+        <div class="card-body flush" id="dash-recent"></div>
+      </div>
+    </section>
+
+    <!-- ===== Lançamentos ===== -->
+    <section class="view" id="view-transacoes">
+      <div class="page-head">
+        <div>
+          <h1>Lançamentos</h1>
+          <p class="sub">Registre e gerencie suas receitas e despesas</p>
+        </div>
+        <button class="btn primary" id="tx-novo" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+          Novo lançamento
+        </button>
+      </div>
+      <div class="filters">
+        <input type="month" id="f-mes" aria-label="Mês">
+        <select id="f-tipo" aria-label="Tipo">
+          <option value="todos">Todos os tipos</option>
+          <option value="income">Receitas</option>
+          <option value="expense">Despesas</option>
+        </select>
+        <select id="f-status" aria-label="Status">
+          <option value="todos">Todos os status</option>
+          <option value="paid">Pago</option>
+          <option value="pending">Pendente</option>
+        </select>
+        <button class="btn ghost small" id="f-limpar" type="button">Limpar filtros</button>
+      </div>
+      <div class="filters-summary" id="tx-resumo"></div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Vencimento</th>
+                <th>Descrição</th>
+                <th>Tipo</th>
+                <th>Status</th>
+                <th class="num">Valor</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tx-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Categorias ===== -->
+    <section class="view" id="view-categorias">
+      <div class="page-head">
+        <div>
+          <h1>Categorias</h1>
+          <p class="sub">Organize seus lançamentos com categorias, cores e ícones</p>
+        </div>
+        <button class="btn primary" id="cat-novo" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+          Nova categoria
+        </button>
+      </div>
+      <div id="cat-list"></div>
+    </section>
+
+    <!-- ===== Carteira ===== -->
+    <section class="view" id="view-carteira">
+      <div class="page-head">
+        <div>
+          <h1>Carteira</h1>
+          <p class="sub">Sua única conta: todos os lançamentos passam por aqui</p>
+        </div>
+        <button class="btn ghost" id="wallet-edit" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+          Editar carteira
+        </button>
+      </div>
+      <div id="wallet-card"></div>
+    </section>
+
+    <!-- ===== Relatórios ===== -->
+    <section class="view" id="view-relatorios">
+      <div class="page-head">
+        <div>
+          <h1>Relatórios</h1>
+          <p class="sub">Análise do seu dinheiro por período</p>
+        </div>
+      </div>
+      <div class="presets" id="rel-presets">
+        <button class="preset-btn" data-preset="mes" type="button">Este mês</button>
+        <button class="preset-btn" data-preset="3" type="button">Últimos 3 meses</button>
+        <button class="preset-btn" data-preset="6" type="button">Últimos 6 meses</button>
+        <button class="preset-btn" data-preset="ano" type="button">Este ano</button>
+        <button class="preset-btn" data-preset="tudo" type="button">Todo o período</button>
+      </div>
+      <div class="filters">
+        <label>De <input type="month" id="rel-de"></label>
+        <label>Até <input type="month" id="rel-ate"></label>
+      </div>
+
+      <div class="stats-grid stats-4">
+        <div class="card stat">
+          <span class="ic income" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></span>
+          <div><div class="lbl">Receitas</div><div class="val" id="rel-rec">R$ 0,00</div></div>
+        </div>
+        <div class="card stat">
+          <span class="ic expense" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 7 10 10"/><path d="M17 7v10H7"/></svg></span>
+          <div><div class="lbl">Despesas pagas</div><div class="val" id="rel-pagas">R$ 0,00</div></div>
+        </div>
+        <div class="card stat">
+          <span class="ic pending" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <div><div class="lbl">Despesas pendentes</div><div class="val" id="rel-pendentes">R$ 0,00</div></div>
+        </div>
+        <div class="card stat">
+          <span class="ic primary" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></span>
+          <div><div class="lbl">Resultado realizado</div><div class="val" id="rel-sal">R$ 0,00</div></div>
+        </div>
+      </div>
+
+      <div class="grid-5" style="margin-top:24px">
+        <div class="card">
+          <div class="card-head"><h3>Despesas por categoria</h3><p class="card-sub">Pago x pendente</p></div>
+          <div class="card-body">
+            <div id="rel-pie"></div>
+            <div id="rel-pie-legend"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Evolução mensal</h3></div>
+          <div class="card-body">
+            <div id="rel-bars"></div>
+            <div class="legend">
+              <span class="item"><span class="dot income"></span>Receitas</span>
+              <span class="item"><span class="dot expense"></span>Despesas pagas</span>
+              <span class="item"><span class="dot pending"></span>Despesas pendentes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site">
+    <p>Seus dados ficam salvos no banco de dados do servidor (SQLite).</p>
+    <p class="footer-actions">
+      <button id="btn-exportar" type="button">Exportar dados</button>
+      <span aria-hidden="true">&middot;</span>
+      <button id="btn-importar" type="button">Importar dados</button>
+      <span aria-hidden="true">&middot;</span>
+      <button id="btn-mudar-senha" type="button">Trocar senha</button>
+      <input type="file" id="file-importar" accept="application/json,.json" hidden>
+    </p>
+  </footer>
+</div>
+
+<!-- ============ MODAL: Lançamento ============ -->
+<div class="modal-overlay" id="modal-tx">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="tx-modal-title">
+    <div class="modal-head">
+      <h3 id="tx-modal-title">Novo lançamento</h3>
+      <button class="icon-btn" data-close="modal-tx" type="button" aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="seg" id="tx-tipo-seg">
+        <button type="button" class="seg-btn" data-tipo="expense">Despesa</button>
+        <button type="button" class="seg-btn" data-tipo="income">Receita</button>
+      </div>
+      <label>Descrição
+        <input id="tx-desc" type="text" maxlength="140" placeholder="Ex: Mercado do mês">
+      </label>
+      <div class="row2">
+        <label>Valor (R$)
+          <input id="tx-val" type="text" inputmode="decimal" placeholder="0,00">
+        </label>
+        <label>Data
+          <input id="tx-date" type="date">
+        </label>
+      </div>
+      <div id="tx-expense-fields">
+        <div class="row2">
+          <label>Vencimento (DD/MM/AA)
+            <input id="tx-due" type="text" inputmode="numeric" maxlength="8" placeholder="DD/MM/AA">
+          </label>
+          <label>Status
+            <div class="seg small" id="tx-status-seg">
+              <button type="button" class="seg-btn" data-status="paid">Pago</button>
+              <button type="button" class="seg-btn" data-status="pending">Pendente</button>
+            </div>
+          </label>
+        </div>
+      </div>
+      <label>Categoria
+        <select id="tx-categoria"></select>
+      </label>
+      <p class="hint" id="tx-hint"></p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn danger hidden" id="tx-delete" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        Excluir
+      </button>
+      <button class="btn ghost" data-close="modal-tx" type="button">Cancelar</button>
+      <button class="btn primary" id="tx-save" type="button">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: Categoria ============ -->
+<div class="modal-overlay" id="modal-cat">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="cat-modal-title">
+    <div class="modal-head">
+      <h3 id="cat-modal-title">Nova categoria</h3>
+      <button class="icon-btn" data-close="modal-cat" type="button" aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <label>Nome
+        <input id="cat-name" type="text" maxlength="60" placeholder="Ex: Mercado">
+      </label>
+      <label>Tipo
+        <select id="cat-type">
+          <option value="expense">Despesa</option>
+          <option value="income">Receita</option>
+        </select>
+      </label>
+      <label>Cor
+        <span class="color-row"><input id="cat-color" type="color" value="#16a34a"><span class="hint" id="cat-color-name"></span></span>
+      </label>
+      <label>Ícone
+        <span class="icon-grid" id="cat-icon-grid"></span>
+      </label>
+    </div>
+    <div class="modal-foot">
+      <button class="btn danger hidden" id="cat-delete" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        Excluir
+      </button>
+      <button class="btn ghost" data-close="modal-cat" type="button">Cancelar</button>
+      <button class="btn primary" id="cat-save" type="button">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: Carteira ============ -->
+<div class="modal-overlay" id="modal-wallet">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="wallet-modal-title">
+    <div class="modal-head">
+      <h3 id="wallet-modal-title">Editar carteira</h3>
+      <button class="icon-btn" data-close="modal-wallet" type="button" aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <label>Nome
+        <input id="wallet-name" type="text" maxlength="60" placeholder="Carteira">
+      </label>
+      <label>Saldo inicial (R$)
+        <input id="wallet-init" type="text" inputmode="decimal" placeholder="0,00">
+      </label>
+      <p class="hint">O saldo disponível é atualizado automaticamente pelas receitas e despesas pagas.</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn ghost" data-close="modal-wallet" type="button">Cancelar</button>
+      <button class="btn primary" id="wallet-save" type="button">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: Trocar senha ============ -->
+<div class="modal-overlay" id="modal-pass">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="pass-modal-title">
+    <div class="modal-head">
+      <h3 id="pass-modal-title">Trocar senha</h3>
+      <button class="icon-btn" data-close="modal-pass" type="button" aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <label>Senha atual
+        <input id="pass-old" type="password" autocomplete="current-password">
+      </label>
+      <label>Nova senha
+        <input id="pass-new" type="password" autocomplete="new-password">
+      </label>
+      <label>Confirme a nova senha
+        <input id="pass-new2" type="password" autocomplete="new-password">
+      </label>
+      <p class="hint">A nova senha precisa ter pelo menos 4 caracteres.</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn ghost" data-close="modal-pass" type="button">Cancelar</button>
+      <button class="btn primary" id="pass-save" type="button">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+<script type="module" src="/js/app.js"></script>
+</body>
+</html>

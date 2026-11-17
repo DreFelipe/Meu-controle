@@ -1,0 +1,25 @@
+{
+  "name": "meu-controle",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Meu Controle - Controle Financeiro Pessoal 2.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "netlify dev",
+    "db:status": "netlify database status",
+    "db:apply": "netlify database migrations apply",
+    "import:sqlite": "node scripts/import-sqlite.mjs",
+    "test:smoke": "node scripts/smoke-test.mjs"
+  },
+  "dependencies": {
+    "@netlify/database": "^2.0.3"
+  },
+  "devDependencies": {
+    "@netlify/database-dev": "^1.0.2",
+    "netlify-cli": "^27.20.0"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  }
+}
